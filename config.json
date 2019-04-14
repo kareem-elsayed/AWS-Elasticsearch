@@ -1,0 +1,4 @@
+{
+  "dev_url" : "<ADD_YOUR_DEV_ELASTICSEARCH_URL>",
+  "stage_url" : "<ADD_YOUR_STAGE_ELASTICSEARCH_URL>"
+}
