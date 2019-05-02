@@ -3,8 +3,8 @@ import json
 
 with open('config.json') as config_file:
     data = json.load(config_file)
-dev_url = data['dev_url']
-stage_url = data['stage_url']
+    dev_url = data['dev_url']
+    stage_url = data['stage_url']
 elastic_url = input('Select Elasticsearch Num : '
                     '\n'
                     "[1] Dev"
@@ -23,9 +23,9 @@ elif elastic_url == "2":
 elif elastic_url == "3":
     elastic_url = input("Insert your Elasticsearch url : ")
 if not elastic_url.startswith('https'):
-    elastic_url = "https://"+f'{elastic_url}'
+    elastic_url = "https://"+elastic_url
 if not elastic_url.endswith('/'):
-    elastic_url = f'{elastic_url}'+'/'
+    elastic_url = elastic_url+'/'
 req = os.system(f'curl -XGET {elastic_url}"_cat/indices?h=index" | grep "logstash-*" > indices.txt')
 with open("indices.txt", "r") as elastic_file:
     elastic_data = elastic_file.readlines()
