@@ -1,5 +1,5 @@
-import os
 import json
+import requests
 
 
 def get_elastic_indices():
@@ -32,7 +32,12 @@ def get_elastic_indices():
 
 def list_and_del():
     es_url = get_elastic_indices()
-    os.system(f'curl -XGET {es_url}"/_cat/indices?h=index" | grep "logstash-*" > indices.txt')
+    print(es_url)
+    es_req = requests.get(es_url+"/_cat/indices?h=index")
+    es_data = es_req.text
+    with open("indices.txt", "w+") as elastic_file:
+        elastic_file.write(es_data)
+        elastic_file.close()
     with open("indices.txt", "r") as elastic_file:
         elastic_data = elastic_file.readlines()
         all_indices = [remove_new_line.replace('\n', '') for remove_new_line in elastic_data]
@@ -43,9 +48,8 @@ def list_and_del():
         insert_indices = input("Select indices [Press any key to exit]: ")
         if not insert_indices.startswith('logstash'):
             break
-        delete_indices = f'curl -XDELETE {es_url}"/"{insert_indices}'
-        os.system(delete_indices)
-        print('\n')
+        delete_indices = es_url+'/'+insert_indices
+        requests.delete(delete_indices)
     print("Done")
 
 
