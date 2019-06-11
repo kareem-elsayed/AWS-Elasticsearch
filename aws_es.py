@@ -1,19 +1,20 @@
 import json
 import requests
+import re
 
 
 def get_elastic_indices():
-    elastic_url: str = input('Select Elasticsearch Num : '
-                             '\n'
-                             "[1] Dev"
-                             '\n'
-                             "[2] Stage"
-                             '\n'
-                             '[3] Insert your Elasticsearch url'
-                             '\n'
-                             "##################################"
-                             '\n'
-                             )
+    elastic_url = input('Select Elasticsearch Num : '
+                        '\n'
+                        "[1] Dev"
+                        '\n'
+                        "[2] Stage"
+                        '\n'
+                        '[3] Insert your Elasticsearch url'
+                        '\n'
+                        "##################################"
+                        '\n'
+                        )
     with open('config.json') as config_file:
         data = json.load(config_file)
         dev_url = data['dev_url']
@@ -32,25 +33,19 @@ def get_elastic_indices():
 
 def list_and_del():
     es_url = get_elastic_indices()
-    print(es_url)
-    es_req = requests.get(es_url+"/_cat/indices?h=index")
-    es_data = es_req.text
-    with open("indices.txt", "w+") as elastic_file:
-        elastic_file.write(es_data)
-        elastic_file.close()
-    with open("indices.txt", "r") as elastic_file:
-        elastic_data = elastic_file.readlines()
-        all_indices = [remove_new_line.replace('\n', '') for remove_new_line in elastic_data]
-        all_indices.sort()
-    for indices in all_indices:
-        print(indices)
+    es_req = requests.get(es_url + "/_cat/indices?h=index")
+    logstash_reg = re.compile(r'logstash-\d\d\d\d.\d\d.\d\d')
+    new_data = logstash_reg.findall(es_req.text)
+    sorted_data = sorted(new_data)
+    print(sorted_data)
     while True:
         insert_indices = input("Select indices [Press any key to exit]: ")
         if not insert_indices.startswith('logstash'):
-            break
-        delete_indices = es_url+'/'+insert_indices
+            print("Done")
+            exit()
+        delete_indices = es_url + '/' + insert_indices
         requests.delete(delete_indices)
-    print("Done")
+        print('Deleted....')
 
 
 list_and_del()
