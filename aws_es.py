@@ -31,10 +31,11 @@ def get_elastic_indices():
         else:
             return elastic_url
 
-# Filtering ElasticSearch indices,list Logstash indices and select which indices do you want to delete
+# Filtering ElasticSearch indices,list Logstash indices
 
 
-def list_and_del():
+def list_indices():
+    global es_url
     es_url = get_elastic_indices()
     es_req = requests.get(es_url + "/_cat/indices?h=index")
     logstash_reg = re.compile(r'logstash.*')  # Regex pattern for logstash
@@ -42,6 +43,11 @@ def list_and_del():
     sorted_data = sorted(new_data)
     results = '\n'.join(sorted_data)
     print(results)
+
+# Select which indices do you want to delete
+
+
+def del_indices():
     while True:
         insert_indices = input("Select indices [Press any key to exit]: ")
         if not insert_indices.startswith('logstash'):
@@ -52,4 +58,6 @@ def list_and_del():
         print('Deleted....')
 
 
-list_and_del()
+if __name__ == '__main__':
+    list_indices()
+    del_indices()
