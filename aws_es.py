@@ -56,7 +56,6 @@ def del_indices():
             print('Done')
             exit()
         delete_indices = es_url + insert_indices
-        print(delete_indices)
         requests.delete(delete_indices)
         print('Deleted....')
 
